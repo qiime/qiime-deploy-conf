@@ -1,0 +1,276 @@
+The configuration file consists of a single [global] section, a single
+[dependencies] section, and any number of data sections or applications
+sections. All application and data sections must have unique names. All data
+sections must begin with data-
+
+Configuration file options:
+
+
+[global]
+
+    final-deploy-directory [REQUIRED]
+        Supported values: the full path to the deploy directory
+        Description: The base directory that all applications will be deployed
+                     into. Applications will be in directories with the name:
+                     applicationname-version-release (or repository) depending
+                     on the install type.
+
+    log-level
+        Supported values: DEBUG, INFO
+        Default value: INFO
+        Description: DEBUG provides more verbose output then INFO.
+
+    max-deploy-threads
+        Supported values: positive integer (e.g. 1, 2, 3, 4)
+        Default value: 2
+        Description: Number of deploy threads (does not include the main 
+                     thread)
+
+    python-exe
+        Supported values: full path to a python executable
+        Description: This python executable will be used for any 
+                     python-distutils applications to build. If none is
+                     specified qiime-deploy will default to bin/python of a 
+                     [python] application section or simply attempt to use
+                     'python' found in the user's PATH.
+
+    append-environment-to-bashrc:
+        Supported values: yes, no
+        Default value: no
+        Description: If yes, the line sourcing activate.sh will be appended to
+                     the end of ~/.bashrc so the environment will be activated
+                     for interactive non-login shells.
+
+    append-environment-to-bashprofile:
+        Supported values: yes, no
+        Default value: no
+        Description: If yes, the line sourcing activate.sh will be appended to
+                     the end of ~/.bash_profile so the environment will be activated
+                     for login shells.
+
+    tmp-directory
+        Supported values: the full path to the base temp directory to be used
+        Description: The base directory that all applications will be
+                     downloaded and compiled in.
+
+[dependencies]
+
+    commands
+        Supported values: command names, separated by commas
+        Description: qiime-deploy will check all of the specified command names
+                     to ensure that they are avaialble in the PATH
+
+    extra-bash-test
+        Supported values: a valid bash command to execute
+        Description: qiime-deploy will execute this bash command and deem it
+                     successful if it returns 0. If it returns something
+                     besides 0, the test will fail.
+
+
+[data-*]
+
+    local-file [REQUIRED]
+        Description: This is the name of the local file. It will be placed in
+        final-deploy-directory.
+
+    remote-file [REQUIRED]
+        Description: The URL of the file to download.
+
+    data-file-environment-var-name
+        Description: The name of the environment variable to set with the full
+                     path to the downloaded file, e.g.
+                     /final-deploy-directory/local-file
+
+
+[applications]
+
+    version [REQUIRED]
+        Description: The version of the application being deployed.
+
+    build-type [REQUIRED]
+        Supported values:  autoconf, python-distutils, make, make-install, 
+                           c-file, cpp-file, ant, copy, custom
+        Description: The build type for the application.
+
+            autoconf: This is the standard GNU autoconf process (./configure;
+                      make; make install). Contains the additional options
+                      autoconf-configure-options and autoconf-make-options.
+
+            python-distutils: This is the standard python distutils process
+                              (python setup.py build; python setup.py install).
+                              Contains the additional options:
+                              python-build-options. If the global option
+                              deploy-in-python-site-packages is no then the
+                              package will be deployed in its own directory and
+                              PYTHONPATH will be modified. If the value is set
+                              to yes, then the user executing qiime-deploy must
+                              have the appropriate permissions to write to the
+                              python's site-packages directory. The package
+                              will be deployed using whichever python
+                              qiime-deploy defaults to (e.g. either via the
+                              python-exe setting, deploying a [python]
+                              application as part of the qiime-deploy process,
+                              or as a last case the 'python' in the user's 
+                              PATH).
+
+            make: This simply runs 'make' for the application. Contains the
+                  additonal options: make-options. Because this operation
+                  does not cause any installation of the appliation, the source
+                  tree is simply copied to the final deploy directory.
+
+            make-install: This simply runs 'make' and then 'make install' for
+                          the application. Contains the additonal options:
+                          make-install-options for the make process. This does
+                          not currently specify a prefix so the user must have
+                          the appropriate permissions to deploy the application
+                          in whatever location 'make install' defaults to.
+
+            c-file: Compile a single c file with gcc. Additional options:
+                    c-file-compile-options, exe-name. Because this operation
+                    does not cause any installation of the application, the
+                    source tree is simply copied to the final deploy directory.
+
+            cpp-file: Compile a single C++ file using g++. Additional
+                      options: cpp-file-compile-options, exe-name. Because
+                      this operation does not cause any installation of the
+                      application, the source tree is simply copied to the
+                      final deploy directory.
+    
+            ant: This simply runs 'ant' in the applications base directory.
+
+            copy: This simply unzips (if needed) and copies the downloaed
+                  application to the final deploy directory.
+
+            custom: This option performs a custom install. lib/custom.py must
+                    be modified to support additional applications. Currently
+                    supported applications: denoiser, uclust, r, pyronoise,
+                    ampliconnoise, and dotur.
+
+    release-file-name [REQUIRED or repository-* must be specified]
+        Description: This is the name of the file that will be downloaded from
+                     release-location. Note: it will NOT be renamed to this.
+                     release-file-name must match the name from
+                     release-location.
+
+    release-location [REQUIRED or repository-* must be specified]
+        Description: This is the location of the file to be downloaded. It must
+                     be a single download location.
+
+    repository-type [REQUIRED or release-* must be specified]
+        Description: The type of repository to checkout from. Currently
+                     subversion (svn co) and git (git clone) are supported.
+
+    repository-location [REQUIRED or release-* must be specified]
+        Description: Location of the repository to checkout the application.
+
+    repository-local-name [REQUIRED or release-* must be specified]
+        Description: The name of the local directory that the repository should
+                     be placed in.
+
+    repository-options
+        Description: These are passed to "svn co" for subversion and "git
+                     clone" for git.
+
+    deploy-in-python-site-packages
+        Supported values: yes, no
+        Default value: no
+        Description: If yes, this will attempt to deploy any python-distutils
+                     applications into the specifieds python's site-packages
+                     directory instead of deploying into a directory in
+                     final-deploy-directory and modifying PYTHONPATH.
+        Notes: The user account executing qiime-deploy must have the
+               appropriate priviledges to perform this operation.
+
+    unzipped-name
+        Description: The unzipped name of the release-file-name after unzipping
+                     is performed. This defaults to the name of
+                     release-file-name without the zip extension (e.g. .tar.gz,
+                     .tgz, or .zip). However, if that is not the case then this
+                     parameter must be set.
+
+    skip-unzipped-name
+        Supported values: yes or no
+        Default: no
+        Description: If the file specified by release-file-name does not unzip
+                     to a separate directory then skip-unzipped-name must be
+                     set. For example, if the file unzips to the current
+                     directory, then this should be set to yes.
+
+    autoconf-configure-options
+        Description: Any additional flags that should be passed to the autoconf
+                     configure command. --prefix is automatically generated and
+                     set.
+
+    autoconf-make-options
+        Description: Any additional flags that should be passed to the autoconf
+                     make command.
+
+    python-build-options
+        Description: Any additional flags that should be passed to the python
+                     distutils build process. --prefix is automatically
+                     generated and set.
+                     
+    python-install-options
+        Description: Any additional flags that should be passed to the python
+                     distutils install process. --prefix is automatically
+                     generated and set.
+
+    make-options
+        Description: Any additional flags that should be passed to the 'make'
+                     for the make build-type.
+
+    make-install-options
+        Description: Any additional flags that should be passed to the 'make'
+                     command for the make-install build-type.
+
+    c-file-compile-options
+        Description: Any additional flags that should be passed to the compile
+                     command for the c-file build-type.
+
+    cpp-file-compile-options
+        Description: Any additional flags that should be passed to the compile
+                     command for the cpp-file build-type.
+
+    exe-name
+        Description: The name of the exe to be generated by either the c-file
+                     or cpp-file build-types.
+
+    post-bash-commands
+        Description: Any additional bash commands to execute after the entire
+                     build process is complete and successful.
+
+    relative-directory-add-to-path
+        Description: Any directories for the application that should be added
+                     to the user's PATH environment variable (e.g. bin/ or .).
+                     This may be a comma separated list.
+
+    set-environment-variables-deploypath
+        Description: Set additional environment variables (PATH should be set
+                     with relative-directory-add-to-path) using the format
+                     ENV_NAME=ENV_VALUE, separated by commas. Relative paths,
+                     from the base deploy directory for the application, should
+                     be used for ENV_VALUE since the full path will be
+                     determined automatically.
+
+    set-environment-variables-value
+        Description: Set additional environment variables to a specific value,
+                     i.e. not a relative path, in the format:
+                     ENV_NAME=ENV_VALUE, with multiple items separated by
+                     commas.
+
+    copy-source-to-final-deploy
+        Supported values: yes or no
+        Default: no
+        Description: If after the build process the source directory should be
+                     copied to the final deploy directory for the particular
+                     application, this may be set to yes.
+
+    deps
+        Description: Dependencies required by the application. This can be a
+                     comma separated list. It must be application names
+                     specified in this file. data-* sections cannot currently
+                     be used as dependencies.
+                     An example: deploying [matplotlib] may require a custom
+                     [python] and [numpy] to be deployed first, in that
+                     case matplotlib would list the dependencies as following:
+                     deps: python, numpy
