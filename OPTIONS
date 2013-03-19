@@ -162,14 +162,29 @@ Configuration file options:
 
     repository-location [REQUIRED or release-* must be specified]
         Description: Location of the repository to checkout the application.
+                     See local-repository for more details.
 
     repository-local-name [REQUIRED or release-* must be specified]
         Description: The name of the local directory that the repository should
-                     be placed in.
+                     be placed in. Ignored if local-repository is yes.
 
     repository-options
         Description: These are passed to "svn co" for subversion and "git
                      clone" for git.
+
+    local-repository
+        Supported values: yes, no
+        Default value: no
+        Description: If yes, repository-location is assumed to be an absolute
+                     path on the local machine that points to a repository that
+                     was previously cloned (if repository-type is git) or
+                     checked out (if repository-type is svn). This absolute
+                     path should be a directory. This directory will *never* be
+                     removed or modified (a temporary copy will be made and the
+                     build will happen there). repository-local-name will be
+                     ignored.
+                     If no, repository-location is assumed to be a location
+                     from which a local clone/checkout must first be made.
 
     deploy-in-python-site-packages
         Supported values: yes, no
