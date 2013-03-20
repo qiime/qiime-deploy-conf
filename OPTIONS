@@ -170,7 +170,7 @@ Configuration file options:
 
     repository-options
         Description: These are passed to "svn co" for subversion and "git
-                     clone" for git.
+                     clone" for git. Ignored if local-repository is yes.
 
     local-repository
         Supported values: yes, no
@@ -181,8 +181,8 @@ Configuration file options:
                      checked out (if repository-type is svn). This absolute
                      path should be a directory. This directory will *never* be
                      removed or modified (a temporary copy will be made and the
-                     build will happen there). repository-local-name will be
-                     ignored.
+                     build will happen there). repository-local-name and
+                     repository-options will be ignored.
                      If no, repository-location is assumed to be a location
                      from which a local clone/checkout must first be made.
 
