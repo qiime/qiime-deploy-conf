@@ -156,7 +156,7 @@ Configuration file options:
                        Will ignore the following options: release-file-name,
                        release-location, repository-type, repository-location,
                        repository-local-name, repository-options,
-                       unzipped-name, skip-unzipped-name, and
+                       local-repository, unzipped-name, skip-unzipped-name, and
                        copy-source-to-final-deploy (in addition to other build-
                        type-specific options).
 
