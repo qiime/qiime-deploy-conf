@@ -156,7 +156,7 @@ Configuration file options:
                        Will ignore the following options: release-file-name,
                        release-location, repository-type, repository-location,
                        repository-local-name, repository-options,
-                       unzipped-name, skip-unzipped-name, and
+                       local-repository, unzipped-name, skip-unzipped-name, and
                        copy-source-to-final-deploy (in addition to other build-
                        type-specific options).
 
@@ -184,14 +184,29 @@ Configuration file options:
 
     repository-location [REQUIRED unless release-* is specified or r-package build-type]
         Description: Location of the repository to checkout the application.
+                     See local-repository for more details.
 
     repository-local-name [REQUIRED unless release-* is specified or r-package build-type]
         Description: The name of the local directory that the repository should
-                     be placed in.
+                     be placed in. Ignored if local-repository is yes.
 
     repository-options
         Description: These are passed to "svn co" for subversion and "git
-                     clone" for git.
+                     clone" for git. Ignored if local-repository is yes.
+
+    local-repository
+        Supported values: yes, no
+        Default value: no
+        Description: If yes, repository-location is assumed to be an absolute
+                     path on the local machine that points to a repository that
+                     was previously cloned (if repository-type is git) or
+                     checked out (if repository-type is svn). This absolute
+                     path should be a directory. This directory will *never* be
+                     removed or modified (a temporary copy will be made and the
+                     build will happen there). repository-local-name and
+                     repository-options will be ignored.
+                     If no, repository-location is assumed to be a location
+                     from which a local clone/checkout must first be made.
 
     deploy-in-python-site-packages
         Supported values: yes, no
