@@ -102,7 +102,8 @@ Configuration file options:
 
             autoconf: This is the standard GNU autoconf process (./configure;
                       make; make install). Contains the additional options
-                      autoconf-configure-options and autoconf-make-options.
+                      autoconf-configure-options, autoconf-make-options,
+                      and autoconf-make-install-options.
 
             python-distutils: This is the standard python distutils process
                               (python setup.py build; python setup.py install).
@@ -241,6 +242,10 @@ Configuration file options:
     autoconf-make-options
         Description: Any additional flags that should be passed to the autoconf
                      make command.
+
+    autoconf-make-install-options
+        Description: Any additional flags that should be passed to the autoconf
+                     make install command.
 
     python-build-options
         Description: Any additional flags that should be passed to the python
