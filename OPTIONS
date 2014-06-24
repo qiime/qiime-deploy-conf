@@ -190,13 +190,6 @@ Configuration file options:
         Description: The name of the local directory that the repository should
                      be placed in. Ignored if local-repository is yes.
 
-    make-folderpath-relative-to-local 
-        Description: The path starting from repository-local-name to the subdirectory
-                     containing the Makefile. For example, if repository-local-name is
-                     "dir", but the Makefile is located in "dir/subdir1" then
-                     make-folderpath-relative-to-local would be "dir/subdir1". 
-                     Note: this option currently supports only repository-* 
-
     repository-options
         Description: These are passed to "svn co" for subversion and "git
                      clone" for git. Ignored if local-repository is yes.
