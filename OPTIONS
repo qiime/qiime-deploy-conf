@@ -195,7 +195,7 @@ Configuration file options:
                      to the subdirectory containing the Makefile. For example, if 
                      repository-local-name is "dir", but the Makefile is located in 
                      "dir/subdir1" then make-folderpath-relative-to-local would be 
-                     "dir/subdir1". 
+                     "subdir1". 
 
     repository-options
         Description: These are passed to "svn co" for subversion and "git
